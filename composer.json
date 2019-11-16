@@ -1,6 +1,14 @@
 {
     "name": "amla-cameroun/fp-match-simple",
     "description": "A short description of what your package does",
+    "authors": [
+        {
+            "name": "Patrick Balemaken",
+            "email": "patrickmaken@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    
     "require": {
         "php": "7.*"
     }
