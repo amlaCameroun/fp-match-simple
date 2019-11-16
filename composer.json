@@ -1,5 +1,5 @@
 {
-    "name": "amlaCameroun/fp-match-simple",
+    "name": "amla-cameroun/fp-match-simple",
     "description": "A short description of what your package does",
     "require": {
         "php": "7.*"
