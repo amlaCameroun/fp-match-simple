@@ -3,8 +3,8 @@
 namespace FPMatchSimple\Tests;
 
 use PHPUnit\Framework\TestCase;
-use FPMatchSimple\Core\Identity;
-use FPMatchSimple\Exceptions\IdentityException;
+use AmlaCameroun\FPMatchSimple\Core\Identity;
+use AmlaCameroun\FPMatchSimple\Exceptions\IdentityException;
 
 class IdentityTest extends TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace FPMatchSimple\Core;
+namespace AmlaCameroun\FPMatchSimple\Core;
 
-use FPMatchSimple\Exceptions\IdentityException;
+use AmlaCameroun\FPMatchSimple\Exceptions\IdentityException;
 
 class Identity 
 {
@@ -14,17 +14,16 @@ class Identity
     protected $id;
 
     /**
-     * Person fingerprints
+     * Person fingerprints.
      *
      * @var array
      */
     protected $fps;
 
     /**
-     * Undocumented function
-     *
      * @param integer $id Person ID
      * @param array $fps Person fingerprints
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\IdentityException
      */
     public function __construct(int $id, array $fps)
     {
@@ -36,23 +35,34 @@ class Identity
     }
 
     /**
-     * Validates ID
+     * Synchronise identity with FP server.
      *
-     * @return bool
-     * @throws IdentityException
+     * @return bool Whether or not synchronisation succeeds.
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     */
+    public function synchronize()
+    {
+        return FPServerAPI::synchronise($this);
+    }
+
+    /**
+     * Validates ID.
+     *
+     * @return true
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\IdentityException
      */
     protected function validateId()
     {
-        if (!is_int($this->id) || $this->id === 0) throw new IdentityException('INVALID ID');
+        if (!is_int($this->id) || $this->id === 0) throw new IdentityException('Invalid ID.');
 
         return true;
     }
 
     /**
-     * Validates figerprints
+     * Validates figerprints.
      *
-     * @return bool
-     * @throws IdentityException
+     * @return true
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\IdentityException
      */
     protected function validateFPs()
     {
@@ -62,10 +72,21 @@ class Identity
             if(is_string($fp) && !empty(trim($fp))) 
                 array_push($tab, $fp);
 
-        if (empty($tab)) throw new IdentityException('INVALID FINGERPRINTS');
+        if (empty($tab)) throw new IdentityException('Invalid fingerprints.');
 
         $this->fps = $tab;
         return true;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'fps' => $this->fps,
+        ];
     }
 }
 

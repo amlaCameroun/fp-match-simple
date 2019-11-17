@@ -1,16 +1,12 @@
 <?php
 
-namespace FPMatchSimple\Exceptions;
+namespace AmlaCameroun\FPMatchSimple\Exceptions;
 
-use Exception;
-
-class IdentityException extends Exception
+class IdentityException extends BaseException
 {
-    private const CODE = 10;
-
-    public function __construct(string $message = '')
+    protected function setCode()
     {
-        $this->code = self::CODE;
-        $this->message = $message;
+        $this->code = BaseException::CODE_IDENTITY_EXCEPTION;
     }
+
 }

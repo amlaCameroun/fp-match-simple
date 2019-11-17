@@ -19,12 +19,12 @@
 
     "autoload": {
         "psr-4": {
-            "FPMatchSimple\\": "src/"
+            "AmlaCameroun\\FPMatchSimple\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "FPMatchSimple\\Tests\\": "tests/"
+            "AmlaCameroun\\FPMatchSimple\\Tests\\": "tests/"
         }
     }
 }
