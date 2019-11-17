@@ -1,6 +1,6 @@
 {
     "name": "amla-cameroun/fp-match-simple",
-    "description": "A short description of what your package does",
+    "description": "Bibliothèque permettant de communiquer avec le module de comparaison des empreintes digitales",
     "authors": [
         {
             "name": "Patrick Balemaken",
