@@ -2,6 +2,8 @@
 
 namespace FPMatchSimple\Core;
 
+use FPMatchSimple\Exceptions\IdentityException;
+
 class Identity 
 {
     /**
@@ -37,11 +39,11 @@ class Identity
      * Validates ID
      *
      * @return bool
-     * @throws \Exception
+     * @throws IdentityException
      */
     protected function validateId()
     {
-        if (!is_int($this->id) || $this->id === 0) throw new \Exception('INVALID ID');
+        if (!is_int($this->id) || $this->id === 0) throw new IdentityException('INVALID ID');
 
         return true;
     }
@@ -50,7 +52,7 @@ class Identity
      * Validates figerprints
      *
      * @return bool
-     * @throws \Exception
+     * @throws IdentityException
      */
     protected function validateFPs()
     {
@@ -60,7 +62,7 @@ class Identity
             if(is_string($fp) && !empty(trim($fp))) 
                 array_push($tab, $fp);
 
-        if (empty($tab)) throw new \Exception('INVALID FINGERPRINTS');
+        if (empty($tab)) throw new IdentityException('INVALID FINGERPRINTS');
 
         $this->fps = $tab;
         return true;

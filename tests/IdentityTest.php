@@ -2,8 +2,9 @@
 
 namespace FPMatchSimple\Tests;
 
-use FPMatchSimple\Core\Identity;
 use PHPUnit\Framework\TestCase;
+use FPMatchSimple\Core\Identity;
+use FPMatchSimple\Exceptions\IdentityException;
 
 class IdentityTest extends TestCase
 {
@@ -16,7 +17,7 @@ class IdentityTest extends TestCase
             $identity = new Identity($id, $fps);
             $this->assertSame(Identity::class, get_class($identity));
         } else {
-            $this->expectException('Exception');
+            $this->expectException(IdentityException::class);
             $identity = new Identity($id, $fps);
         }
     }
