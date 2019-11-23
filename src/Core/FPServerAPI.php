@@ -8,7 +8,7 @@ use GuzzleHttp\Client;
 class FPServerAPI 
 {
     protected const SYNCHRONIZE_URL = '/identity/add';
-    protected const IDENTIFY_URL = '/fpmatch-simple/identity';
+    protected const IDENTIFY_URL = '/identity/find?q=%s';
     protected const INTERN_AUTH_TOKEN_KEY = 'Intern-Auth-Token';
 
     /**
@@ -34,10 +34,10 @@ class FPServerAPI
     /**
      * Synchronise identity with FP server.
      * 
-     * TODO: A tester
+     * !!! A tester
      *
      * @param \AmlaCameroun\FPMatchSimple\Core\Identity $identity
-     * @return float The request time
+     * @return \AmlaCameroun\FPMatchSimple\Core\FPServerAPIResponseModel
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
      * @throws \GuzzleHttp\Exception\RequestException
      */
@@ -47,38 +47,47 @@ class FPServerAPI
 
         $client = self::makeClient(['json' => $identity->toArray()]);
         $url = self::getUrl('synchronize');
-        $response = self::perform($client, $url, 'post');
-
-        if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) return $response->getTime();
+        return  self::perform($client, $url, 'post');
     }
 
     /**
-     * Get person $id.
+     * Forget identity with FP server.
      * 
-     * TODO: Test $response to verify communication with FP Server
+     * !!! A tester
      *
-     * @param string $fp
-     * @return int|null Person ID
+     * @param int $id
+     * @return \AmlaCameroun\FPMatchSimple\Core\FPServerAPIResponseModel
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
      * @throws \GuzzleHttp\Exception\RequestException
      */
-    public static function getPersonId(string $fp)
+    public static function forget(int $id)
+    {
+        self::validateBaseUrl();
+
+        $client = self::makeClient(['json' => $identity->toArray()]);
+        $url = self::getUrl('synchronize');
+        return  self::perform($client, $url, 'post');
+    }
+
+    /**
+     * Find User
+     * 
+     * !!! A tester
+     * TODO: Changer le 404 en 200 en cas d'echec
+     *
+     * @param string $fp
+     * @return \AmlaCameroun\FPMatchSimple\Core\FPServerAPIResponseModel
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public static function find(string $fp)
     {
         self::validateBaseUrl();
         if($fp == '') throw new FPServerAPIException('Fingerprint cannot be empty.');
 
-        $options = [
-            'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded',
-                // self::AUTH_TOKEN_KEY => self::AUTH_TOKEN_VALUE,
-            ],
-        ];
-        $client = self::makeClient($options);
-        $url = self::getUrl('identify');
-        $url .= sprintf('?fp=%s', urlencode($fp));
-        $response = self::perform($client, $url);
-
-        return (substr($response, 0, 3) == 'id=') ? intval(str_replace('id=', '', $response)) : null;
+        $client = self::makeClient();
+        $url = sprintf(self::getUrl('identify'), urlencode($fp));
+        return self::perform($client, $url);
     }
 
     /**

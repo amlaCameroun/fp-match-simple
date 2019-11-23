@@ -22,7 +22,7 @@ class FPServerAPIResponseModel
     protected $time;
 
     /**
-     * @var array
+     * @var array Response data
      */
     protected $data;
 
@@ -44,7 +44,6 @@ class FPServerAPIResponseModel
     }
 
     
-
     /**
      * Get response status
      *
@@ -63,5 +62,15 @@ class FPServerAPIResponseModel
     public function getTime()
     {
         return $this->time;
+    }
+
+    /**
+     * Get response data
+     *
+     * @return  array
+     */ 
+    public function getData()
+    {
+        return $this->data;
     }
 }

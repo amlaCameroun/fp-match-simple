@@ -50,8 +50,24 @@ class Identity
      */
     public function synchronize()
     {
-        $this->syncTime =  FPServerAPI::synchronise($this);
-        return true;
+        $response = FPServerAPI::synchronise($this);
+        if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) {
+            $this->syncTime =  $response->getTime();
+            return true;
+        }
+    }
+
+    /**
+     * Get user id whose figerprints matches the given value
+     *
+     * @param string $fp
+     * @return \AmlaCameroun\FPMatchSimple\Core\SearchResultModel
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public static function find(string $fp)
+    {
+        return new SearchResultModel(FPServerAPI::find($fp));
     }
 
     /**
