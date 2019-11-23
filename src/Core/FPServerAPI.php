@@ -7,10 +7,9 @@ use GuzzleHttp\Client;
 
 class FPServerAPI 
 {
-    // private const AUTH_TOKEN_KEY = 'Intern-Auth-Token';
-
-    protected const SYNCHRONIZE_URL = '/fpmatch-simple/synchronize';
+    protected const SYNCHRONIZE_URL = '/identity/add';
     protected const IDENTIFY_URL = '/fpmatch-simple/identity';
+    protected const INTERN_AUTH_TOKEN_KEY = 'Intern-Auth-Token';
 
     /**
      * @var string
@@ -20,15 +19,25 @@ class FPServerAPI
     /**
      * @var string
      */
+    protected static $internAuthTokenValue = '';
+
+    /**
+     * @var string
+     */
     protected static $certPath;
+
+    /**
+     * @var float
+     */
+    protected static $timeOut = 10.0;
 
     /**
      * Synchronise identity with FP server.
      * 
-     * TODO: Test $response to verify communication with FP Server
+     * TODO: A tester
      *
      * @param \AmlaCameroun\FPMatchSimple\Core\Identity $identity
-     * @return boolean true if synchronisation succeeds
+     * @return float The request time
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
      * @throws \GuzzleHttp\Exception\RequestException
      */
@@ -36,21 +45,11 @@ class FPServerAPI
     {
         self::validateBaseUrl();
 
-        $payload = ['identity' => $identity->toArray()];
-        $payload = json_encode($payload);
-
-        $options = [
-            'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded',
-                // self::AUTH_TOKEN_KEY => self::AUTH_TOKEN_VALUE,
-            ],
-            'body' => $payload,
-        ];
-        $client = self::makeClient($options);
+        $client = self::makeClient(['json' => $identity->toArray()]);
         $url = self::getUrl('synchronize');
         $response = self::perform($client, $url, 'post');
 
-        return $response == 'OK';
+        if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) return $response->getTime();
     }
 
     /**
@@ -86,17 +85,22 @@ class FPServerAPI
      * Configure FP Server API options.
      * 
      * @param array $options Associative array which can have keys:
-     *  'base_url', 'cert_path'. cert_path options will be used for
-     *  for ssl verification if set.
+     *  string 'base_url', string 'auth_key', float 'time_out' (in seconds), 
+     *  string 'cert_path'. 'cert_path' options will be used for ssl 
+     *  verification if set. The default time out is 10s
      * @return void
      */
     public static function setConfigs(array $options)
     {
         if (array_key_exists('base_url', $options)) self::setBaseUrl($options['base_url']);
+        if (array_key_exists('auth_key', $options)) self::setAuthKey($options['auth_key']);
         if (array_key_exists('cert_path', $options)) self::setCertpath($options['cert_path']);
+        if (array_key_exists('time_out', $options)) self::setTimeOut($options['time_out']);
     }
 
     /**
+     * Set the base FP server URL
+     * 
      * @param string $baseUrl
      * @return void
      */
@@ -106,12 +110,36 @@ class FPServerAPI
     }
 
     /**
+     * Set the FP server Authentication Key
+     * 
+     * @param string $baseUrl
+     * @return void
+     */
+    public static function setAuthKey(string $baseUrl)
+    {
+        self::$baseUrl = $baseUrl;
+    }
+
+    /**
+     * Set the ssl certificate path
+     * 
      * @param string $path
      * @return void
      */
     public static function setCertpath(string $path)
     {
         self::$certPath = $path;
+    }
+
+    /**
+     * Set the value of requests time out
+     * 
+     * @param  float  $timeOut time out in seconds
+     * @return  void
+     */ 
+    public function setTimeOut(float $timeOut)
+    {
+        self::$timeOut = $timeOut;
     }
 
     /**
@@ -129,25 +157,27 @@ class FPServerAPI
      */
     protected static function makeClient(array $params = [])
     {
-        $options = [
-            'timeout'  => 10.0,
-        ];
-        if(self::$certPath) $options['verify'] = self::$certPath;
+        $options = ['timeout'  => self::$timeOut];
+
+        if(!empty(self::$certPath)) $options['verify'] = self::$certPath;
 
         foreach ($params as $key => $value) $options[$key] = $value;
+
+        $options['headers'][self::INTERN_AUTH_TOKEN_KEY] = self::$internAuthTokenValue;
 
         return new Client($options);
     }
 
     /**
-     * @return string
+     * @return \AmlaCameroun\FPMatchSimple\Core\FPServerAPIResponseModel
      * @throws \GuzzleHttp\Exception\RequestException
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
      */
     protected static function perform(Client $client, string $url, string $method = 'get')
     {
         $response = $client->$method($url);
         $response = trim((string)$response->getBody());
-        return $response;
+        return new FPServerAPIResponseModel($response);
     }
 
     /**
@@ -168,5 +198,4 @@ class FPServerAPI
         }
         return $url;
     }
-
 }

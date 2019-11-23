@@ -14,6 +14,13 @@ class Identity
     protected $id;
 
     /**
+     * Synchronisation time in seconds
+     *
+     * @var float
+     */
+    protected $syncTime;
+
+    /**
      * Person fingerprints.
      *
      * @var array
@@ -35,14 +42,16 @@ class Identity
     }
 
     /**
-     * Synchronise identity with FP server.
+     * Synchronize identity with FP server.
      *
-     * @return bool Whether or not synchronisation succeeds.
+     * @return true
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function synchronize()
     {
-        return FPServerAPI::synchronise($this);
+        $this->syncTime =  FPServerAPI::synchronise($this);
+        return true;
     }
 
     /**
@@ -87,6 +96,16 @@ class Identity
             'id' => $this->id,
             'fps' => $this->fps,
         ];
+    }
+
+    /**
+     * Get synchronisation time in seconds
+     *
+     * @return  float
+     */ 
+    public function getSyncTime()
+    {
+        return $this->syncTime;
     }
 }
 
