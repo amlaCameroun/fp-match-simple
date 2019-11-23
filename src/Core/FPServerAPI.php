@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 class FPServerAPI 
 {
     protected const SYNCHRONIZE_URL = '/identity/add';
+    protected const SYNCHRONIZE_MULTIPLES_URL = '/identity/add/many';
     protected const IDENTIFY_URL = '/identity/find?q=%s';
     protected const REMOVE_URL = '/identity/remove'; 
     protected const INTERN_AUTH_TOKEN_KEY = 'Intern-Auth-Token';
@@ -33,7 +34,7 @@ class FPServerAPI
     protected static $timeOut = 10.0;
 
     /**
-     * Synchronise identity with FP server.
+     * Synchronize identity with FP server.
      * 
      * !!! A tester
      *
@@ -42,12 +43,34 @@ class FPServerAPI
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
      * @throws \GuzzleHttp\Exception\RequestException
      */
-    public static function synchronise(Identity $identity)
+    public static function synchronize(Identity $identity)
     {
         self::validateBaseUrl();
 
         $client = self::makeClient(['json' => $identity->toArray()]);
         $url = self::getUrl('synchronize');
+        return  self::perform($client, $url, 'post');
+    }
+
+    /**
+     * Synchronize multiples identities with FP server.
+     * 
+     * !!! A tester
+     *
+     * @param \AmlaCameroun\FPMatchSimple\Core\Identity[] $identities
+     * @return \AmlaCameroun\FPMatchSimple\Core\FPServerAPIResponseModel
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public static function synchronizeMultiples(Identity ...$identities)
+    {
+        self::validateBaseUrl();
+
+        $obj = ['identities' => []];
+        foreach ($identities as $identity) array_push($obj['identities'], $identity->toArray());
+
+        $client = self::makeClient(['json' => $obj]);
+        $url = self::getUrl('synchronize_multiples');
         return  self::perform($client, $url, 'post');
     }
 
@@ -201,6 +224,9 @@ class FPServerAPI
         switch ($key) {
             case 'synchronize':
                 $url .= self::SYNCHRONIZE_URL;
+                break;
+            case 'synchronize_multiples':
+                $url .= self::SYNCHRONIZE_MULTIPLES_URL;
                 break;
             case 'identify':
                 $url .= self::IDENTIFY_URL;

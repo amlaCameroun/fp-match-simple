@@ -42,19 +42,35 @@ class Identity
     }
 
     /**
-     * TODO
+     * Syncronize multiples Identities
+     * TODO: COMPLETE
      *
+     * @param \AmlaCameroun\FPMatchSimple\Core\Identity[] $identities
      * @return true
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
      * @throws \GuzzleHttp\Exception\RequestException
      */
-    public function synchronizeMultiples()
+    // protected function synchMulti(Identity ...$identities)
+    protected function synchMulti(Identity ...$identities)
     {
-        $response = FPServerAPI::synchronise($this);
-        if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) {
-            $this->syncTime =  $response->getTime();
-            return true;
-        }
+        $response = FPServerAPI::synchronizeMultiples($identities);
+        // if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) {
+        //     $this->syncTime =  $response->getTime();
+        //     return true;
+        // }
+    }
+
+    /**
+     * Syncronize multiples Identities
+     *
+     * @param \AmlaCameroun\FPMatchSimple\Core\Identity[] $identities
+     * @return true
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public function synchronizeMultiples(array $identities)
+    {
+        return self::synchMulti(...$identities);
     }
 
     /**
@@ -66,7 +82,7 @@ class Identity
      */
     public function synchronize()
     {
-        $response = FPServerAPI::synchronise($this);
+        $response = FPServerAPI::synchronize($this);
         if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) {
             $this->syncTime =  $response->getTime();
             return true;
