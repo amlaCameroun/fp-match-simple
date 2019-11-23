@@ -42,6 +42,22 @@ class Identity
     }
 
     /**
+     * TODO
+     *
+     * @return true
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public function synchronizeMultiples()
+    {
+        $response = FPServerAPI::synchronise($this);
+        if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) {
+            $this->syncTime =  $response->getTime();
+            return true;
+        }
+    }
+
+    /**
      * Synchronize identity with FP server.
      *
      * @return true
@@ -68,6 +84,20 @@ class Identity
     public static function find(string $fp)
     {
         return new SearchResultModel(FPServerAPI::find($fp));
+    }
+
+    /**
+     * Forget the user whose ID is $id
+     *
+     * @param int $id
+     * @return true
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public static function forget(int $id)
+    {
+        $response = FPServerAPI::forget($id);
+        if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) return true;
     }
 
     /**

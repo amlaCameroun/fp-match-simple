@@ -9,6 +9,7 @@ class FPServerAPI
 {
     protected const SYNCHRONIZE_URL = '/identity/add';
     protected const IDENTIFY_URL = '/identity/find?q=%s';
+    protected const REMOVE_URL = '/identity/remove'; 
     protected const INTERN_AUTH_TOKEN_KEY = 'Intern-Auth-Token';
 
     /**
@@ -51,7 +52,7 @@ class FPServerAPI
     }
 
     /**
-     * Forget identity with FP server.
+     * Forget identity
      * 
      * !!! A tester
      *
@@ -64,8 +65,8 @@ class FPServerAPI
     {
         self::validateBaseUrl();
 
-        $client = self::makeClient(['json' => $identity->toArray()]);
-        $url = self::getUrl('synchronize');
+        $client = self::makeClient(['json' => ['id' => $id]]);
+        $url = self::getUrl('remove');
         return  self::perform($client, $url, 'post');
     }
 
@@ -203,6 +204,9 @@ class FPServerAPI
                 break;
             case 'identify':
                 $url .= self::IDENTIFY_URL;
+                break;
+            case 'remove':
+                $url .= self::REMOVE_URL;
                 break;
         }
         return $url;
