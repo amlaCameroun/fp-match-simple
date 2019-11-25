@@ -3,6 +3,7 @@
 namespace AmlaCameroun\FPMatchSimple\Core;
 
 use AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException;
+use AmlaCameroun\FPMatchSimple\Exceptions\IdentityException;
 use GuzzleHttp\Client;
 
 class FPServerAPI 
@@ -10,7 +11,11 @@ class FPServerAPI
     protected const SYNCHRONIZE_URL = '/identity/add';
     protected const SYNCHRONIZE_MULTIPLES_URL = '/identity/add/many';
     protected const IDENTIFY_URL = '/identity/find?q=%s';
-    protected const REMOVE_URL = '/identity/remove'; 
+    protected const REMOVE_URL = '/identity/remove';
+    protected const EXECUTE_URL = '/execute';
+
+    protected const COMMAND_DROP_DB = 'DROP_DB';
+
     protected const INTERN_AUTH_TOKEN_KEY = 'Intern-Auth-Token';
 
     /**
@@ -60,17 +65,43 @@ class FPServerAPI
      * @param \AmlaCameroun\FPMatchSimple\Core\Identity[] $identities
      * @return \AmlaCameroun\FPMatchSimple\Core\FPServerAPIResponseModel
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\IdentityException
      * @throws \GuzzleHttp\Exception\RequestException
      */
-    public static function synchronizeMultiples(Identity ...$identities)
+    public static function synchronizeMultiples(array $identities)
     {
         self::validateBaseUrl();
 
         $obj = ['identities' => []];
-        foreach ($identities as $identity) array_push($obj['identities'], $identity->toArray());
+        foreach ($identities as $identity) {
+            if(!($identity instanceof Identity)) {
+                $message = sprintf('Expected \'%s\' found \'%s\'', Identity::class, get_class($identity));
+                throw new IdentityException($message);
+            }
+            array_push($obj['identities'], $identity->toArray());
+        }
 
         $client = self::makeClient(['json' => $obj]);
         $url = self::getUrl('synchronize_multiples');
+        return  self::perform($client, $url, 'post');
+    }
+
+    /**
+     * Clear database
+     * 
+     * !!! A tester
+     *
+     * @return \AmlaCameroun\FPMatchSimple\Core\FPServerAPIResponseModel
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public static function clearDB()
+    {
+        self::validateBaseUrl();
+
+        $obj = ['command_id' => self::COMMAND_DROP_DB];
+        $client = self::makeClient(['json' => $obj]);
+        $url = self::getUrl('execute_task');
         return  self::perform($client, $url, 'post');
     }
 
@@ -233,6 +264,9 @@ class FPServerAPI
                 break;
             case 'remove':
                 $url .= self::REMOVE_URL;
+                break;
+            case 'execute_task':
+                $url .= self::EXECUTE_URL;
                 break;
         }
         return $url;

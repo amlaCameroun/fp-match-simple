@@ -43,34 +43,17 @@ class Identity
 
     /**
      * Syncronize multiples Identities
-     * TODO: COMPLETE
      *
      * @param \AmlaCameroun\FPMatchSimple\Core\Identity[] $identities
-     * @return true
+     * @return float Task total execution time
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\IdentityException
      * @throws \GuzzleHttp\Exception\RequestException
      */
-    // protected function synchMulti(Identity ...$identities)
-    protected function synchMulti(Identity ...$identities)
+    protected static function synchronizeMultiples(array $identities)
     {
         $response = FPServerAPI::synchronizeMultiples($identities);
-        // if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) {
-        //     $this->syncTime =  $response->getTime();
-        //     return true;
-        // }
-    }
-
-    /**
-     * Syncronize multiples Identities
-     *
-     * @param \AmlaCameroun\FPMatchSimple\Core\Identity[] $identities
-     * @return true
-     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
-     * @throws \GuzzleHttp\Exception\RequestException
-     */
-    public function synchronizeMultiples(array $identities)
-    {
-        return self::synchMulti(...$identities);
+        return $response->getTime();
     }
 
     /**
@@ -100,6 +83,19 @@ class Identity
     public static function find(string $fp)
     {
         return new SearchResultModel(FPServerAPI::find($fp));
+    }
+
+    /**
+     * Clear FP database
+     *
+     * @return \AmlaCameroun\FPMatchSimple\Core\SearchResultModel
+     * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public static function clearDB()
+    {
+        $response = FPServerAPI::clearDB();
+        return $response->getTime();
     }
 
     /**
