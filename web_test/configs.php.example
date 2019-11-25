@@ -1,0 +1,6 @@
+<?php
+
+return [
+    'fp_server_base_url' => 'http://localhost:8080/fpmatch-simple',
+    'auth_token' => 'XXXXXXXXXXXXXXXXXXXXXXXX',
+];
