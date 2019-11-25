@@ -7,11 +7,14 @@ require '../vendor/autoload.php';
 $env = require 'env.php';
 
 
-if (empty($_POST)) $response = "";
+if (empty($_POST)) $responseStr = "";
 else {
+    // FP Server API settings
     $configs = [
         'base_url' => $env['fp_server_base_url'],
         'auth_key' => $env['auth_token'],
+        'time_out' => 10,
+        'cert_path' => '',
     ];
     FPServerAPI::setConfigs($configs);
 
@@ -42,7 +45,7 @@ else {
             if ($result->getId() === null) {
                 $responseStr = sprintf('status=NOT FOUND time=%ss', $result->getTime());
             } else {
-                $responseStr = sprintf('status=SUCCESS time=%ss userID=%s percentage=%s', $result->getTime(), $result->getId(), $result->getPercentage());
+                $responseStr = sprintf('status=SUCCESS time=%ss userID=%s matching_percentage=%s%%', $result->getTime(), $result->getId(), $result->getPercentage());
             }
 
             break;
@@ -78,7 +81,7 @@ else {
     <div class="row p-5">
         <div class="col-12">
             <div class="row m-5">
-                <div class="col-12">
+                <div class="col-12 text-center">
                     <div class="d-inline">
                         <button class="btn btn-success action-btn" data-operation="ADD_USER">Add a user</button>
                     </div>

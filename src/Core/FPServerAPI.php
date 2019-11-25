@@ -200,7 +200,7 @@ class FPServerAPI
      * @param  float  $timeOut time out in seconds
      * @return  void
      */ 
-    public function setTimeOut(float $timeOut)
+    public static function setTimeOut(float $timeOut)
     {
         self::$timeOut = $timeOut;
     }
