@@ -128,7 +128,6 @@ class FPServerAPI
      * Find User
      * 
      * !!! A tester
-     * TODO: Changer le 404 en 200 en cas d'echec
      *
      * @param string $fp
      * @return \AmlaCameroun\FPMatchSimple\Core\FPServerAPIResponseModel
@@ -181,7 +180,7 @@ class FPServerAPI
      */
     public static function setAuthKey(string $baseUrl)
     {
-        self::$baseUrl = $baseUrl;
+        self::$internAuthTokenValue = $baseUrl;
     }
 
     /**

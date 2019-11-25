@@ -42,7 +42,7 @@ class Identity
     }
 
     /**
-     * Syncronize multiples Identities
+     * Synchronize multiples Identities
      *
      * @param \AmlaCameroun\FPMatchSimple\Core\Identity[] $identities
      * @return float Task total execution time
@@ -50,7 +50,7 @@ class Identity
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\IdentityException
      * @throws \GuzzleHttp\Exception\RequestException
      */
-    protected static function synchronizeMultiples(array $identities)
+    public static function synchronizeMultiples(array $identities)
     {
         $response = FPServerAPI::synchronizeMultiples($identities);
         return $response->getTime();
@@ -88,7 +88,7 @@ class Identity
     /**
      * Clear FP database
      *
-     * @return \AmlaCameroun\FPMatchSimple\Core\SearchResultModel
+     * @return float Task total execution time
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
      * @throws \GuzzleHttp\Exception\RequestException
      */
@@ -102,14 +102,15 @@ class Identity
      * Forget the user whose ID is $id
      *
      * @param int $id
-     * @return true
+     * @return float Task total execution time
      * @throws \AmlaCameroun\FPMatchSimple\Exceptions\FPServerAPIException
      * @throws \GuzzleHttp\Exception\RequestException
      */
     public static function forget(int $id)
     {
         $response = FPServerAPI::forget($id);
-        if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) return true;
+        if ($response->getStatus() == FPServerAPIResponseModel::STATUS_OK) 
+            return $response->getTime();
     }
 
     /**
