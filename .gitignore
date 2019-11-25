@@ -1,3 +1,3 @@
 vendor
 composer.lock
-web_test/configs.php
+web_test/env.php

@@ -1,5 +1,5 @@
 <?php
-    $config = require 'configs.php'
+    $env = require 'env.php'
 ?>
 <!DOCTYPE html>
 <html>
@@ -13,8 +13,8 @@
     <script src='main.js'></script> -->
 </head>
 <body>
-    <?= $config['fp_server_base_url'] ?>
-    <?= $config['auth_token'] ?>
+    <?= $env['fp_server_base_url'] ?>
+    <?= $env['auth_token'] ?>
 
     <script src="js/jquery-3.4.1.min.js"></script>
     <script src="js/popper.min.js"></script>
